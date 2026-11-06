@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<title>Remove Line Breaks From Text. Free, nothing uploaded</title>
+<meta name="description" content="Paste text that was broken into short lines by an email, a PDF or a phone. Get your paragraphs back in one press. Free, no sign-up, and nothing ever leaves your browser.">
+<link rel="canonical" href="https://cleantext.withmagic.ai/remove-line-breaks/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Clean Text">
+<meta property="og:title" content="Remove Line Breaks From Text. Free, nothing uploaded">
+<meta property="og:description" content="Text chopped into short lines by an email, a PDF or a phone. Paste it, press one button, get your paragraphs back. Nothing is uploaded.">
+<meta property="og:url" content="https://cleantext.withmagic.ai/remove-line-breaks/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Remove Line Breaks From Text. Free, nothing uploaded">
+<meta name="twitter:description" content="Text chopped into short lines by an email, a PDF or a phone. Paste it, press one button, get your paragraphs back. Nothing is uploaded.">
+<meta property="og:image" content="https://cleantext.withmagic.ai/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Text broken into short lines on the left, the same text as clean paragraphs on the right.">
+<meta name="twitter:image" content="https://cleantext.withmagic.ai/og.png">
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<script src="/boot.js"></script>
+
+<a class="skip" href="#tool">Skip to the tool</a>
+
+<header class="site">
+  <div class="wrap bar">
+    <a class="mark" href="/">clean<span>text</span></a>
+    <nav aria-label="Page sections">
+      <a href="/">Full cleaner</a>
+      <a href="#faq">Questions</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero wrap">
+    <p class="kick">Free. No sign-up. Nothing uploaded.</p>
+    <h1>Remove line breaks from text</h1>
+    <p class="lede">
+      An email client chopped it at 72 characters. A PDF broke it at the column edge. A phone
+      broke it at 40. Paste it here and your paragraphs come back, and your text never leaves
+      this browser.
+    </p>
+  </section>
+
+  <!-- ---------------------------------------------------------------- -->
+  <section id="tool" class="tool wrap" aria-labelledby="tool-title">
+    <h2 id="tool-title" class="sr-only">The tool</h2>
+
+    <div id="boot-error" class="boot-error" role="alert" hidden>
+      <p><strong>The tool did not load.</strong> Your text is safe, nothing was sent anywhere.
+      Reload the page and it will usually come back.</p>
+      <p class="boot-error-detail" id="boot-error-detail"></p>
+    </div>
+
+    <div class="panes">
+      <div class="pane">
+        <label class="pane-label" for="input"><span class="num">1</span> Paste</label>
+        <textarea id="input" spellcheck="false" autocomplete="off"
+          placeholder="Paste here"
+          aria-describedby="input-help"></textarea>
+        <p id="input-help" class="hint">Your original stays here.</p>
+      </div>
+
+      <div class="pane">
+        <label class="pane-label" for="output"><span class="num">2</span> Joined up</label>
+        <textarea id="output" class="output" spellcheck="false" autocomplete="off"
+          placeholder="Your text shows up here, in paragraphs."
+          aria-label="Joined text, editable"></textarea>
+        <p class="hint">You can edit this.</p>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="copy" class="btn primary" type="button">Copy joined text</button>
+    </div>
+
+    <p id="status" class="sr-only" role="status" aria-live="polite"></p>
+    <div id="chips" class="chips" aria-hidden="true"></div>
+
+    <div class="actions-minor">
+      <button id="reset" class="linkish" type="button">Start over</button>
+    </div>
+
+    <details class="options">
+      <summary>Options</summary>
+      <div class="opts">
+        <label class="opt opt-select">
+          <span>Keep</span>
+          <select id="opt-mode">
+            <option value="paragraphs" selected>Paragraphs, split on blank lines</option>
+            <option value="all">Nothing. Make it one single line</option>
+          </select>
+        </label>
+        <label class="opt"><input type="checkbox" id="opt-keepLists" checked> Keep bullets and numbered items on their own lines</label>
+        <label class="opt"><input type="checkbox" id="opt-dehyphenate" checked> Rejoin words split by a hyphen at the line end</label>
+        <label class="opt opt-select">
+          <span>Join with</span>
+          <select id="opt-separator">
+            <option value=" " selected>A space</option>
+            <option value="">Nothing at all</option>
+          </select>
+        </label>
+      </div>
+    </details>
+  </section>
+
+  <!-- ---------------------------------------------------------------- -->
+  <section class="wrap answer" aria-labelledby="privacy-q">
+    <h2 id="privacy-q">Where does your text go?</h2>
+    <p class="big-answer">Nowhere. It stays in your browser.</p>
+    <p>
+      There is no server doing the work here. Open your browser's network tab and watch while you
+      paste. Nothing goes out. Or turn off your wifi and use the page anyway. It still works.
+    </p>
+  </section>
+
+  <!-- ---------------------------------------------------------------- -->
+  <section id="faq" class="wrap faq" aria-labelledby="faq-title">
+    <h2 id="faq-title">Questions</h2>
+
+    <details>
+      <summary>Will it ruin my bullet list?</summary>
+      <p>No. Bullets and numbered items stay on their own lines, and a bullet that was itself
+      wrapped gets joined back into its own item rather than into the one above. There is a
+      checkbox under Options if you want everything joined regardless.</p>
+    </details>
+
+    <details>
+      <summary>I copied this out of a PDF and words are split with hyphens.</summary>
+      <p>Those get repaired. A word broken as <code>informa-</code> at the end of one line and
+      <code>tion</code> at the start of the next is put back together with no space in the middle.
+      A real hyphen before a capital letter is left alone, because that one is usually part of the
+      word.</p>
+    </details>
+
+    <details>
+      <summary>Can I get everything on one single line?</summary>
+      <p>Yes. Under Options, change Keep to "Nothing. Make it one single line". Every break goes,
+      including the blank lines between paragraphs.</p>
+    </details>
+
+    <details>
+      <summary>How is this different from the full cleaner?</summary>
+      <p>The <a href="/">full cleaner</a> guesses. It measures how wide the lines are and only
+      rejoins the ones long enough to have been wrapped, because inside a whole message a wrong
+      guess is damage you would not notice. This page does not guess. You asked for the line
+      breaks to go, so they go.</p>
+    </details>
+  </section>
+
+  <section class="wrap closer">
+    <p class="closer-line">Paste yours in and see.</p>
+    <p><a class="btn primary" href="#tool">Back to the tool</a></p>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p class="foot-mark">clean<span>text</span></p>
+    <nav aria-label="Tools">
+      <a href="/">Full cleaner</a>
+      <a href="/tools/">All tools</a>
+      <a href="/remove-line-breaks/">Line breaks</a>
+      <a href="/remove-extra-spaces/">Extra spaces</a>
+      <a href="/title-case-converter/">Title case</a>
+      <a href="/markdown-to-plain-text/">Markdown to plain text</a>
+    </nav>
+    <nav aria-label="Footer">
+      <a href="/privacy.html">Privacy</a>
+      <a href="/terms.html">Terms</a>
+      <a href="mailto:hello@withmagic.ai">Contact</a>
+    </nav>
+    <p class="fine">Made with <svg class="heart" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21s-7.5-4.7-9.5-9.2C1.1 8.5 2.7 5 6.2 5c2 0 3.3 1.1 4 2.1.7-1 2-2.1 4-2.1 3.5 0 5.1 3.5 3.7 6.8C19.5 16.3 12 21 12 21z"/></svg> by Coding Raj.</p>
+  </div>
+</footer>
+
+<noscript>
+  <div class="wrap noscript-note">
+    <p>This tool needs JavaScript, because the work runs in your browser rather than on a server.
+    That is also why nothing you paste is ever uploaded.</p>
+  </div>
+</noscript>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://cleantext.withmagic.ai/remove-line-breaks/#app",
+      "name": "Remove Line Breaks",
+      "url": "https://cleantext.withmagic.ai/remove-line-breaks/",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Any modern browser",
+      "browserRequirements": "Requires JavaScript",
+      "description": "Rejoins text that was hard-wrapped into short lines by an email client, a PDF or a phone, keeping paragraph breaks and list items. Runs entirely in the browser, so nothing is uploaded.",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "isPartOf": { "@id": "https://cleantext.withmagic.ai/#app" }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://cleantext.withmagic.ai/remove-line-breaks/#faq",
+      "mainEntity": [
+        { "@type": "Question", "name": "Will it ruin my bullet list?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. Bullets and numbered items stay on their own lines, and a wrapped bullet is joined back into its own item. There is a checkbox if you want everything joined regardless." } },
+        { "@type": "Question", "name": "I copied this out of a PDF and words are split with hyphens.",
+          "acceptedAnswer": { "@type": "Answer", "text": "Those get repaired. A word broken as informa- at the end of one line and tion at the start of the next is put back together with no space in the middle." } },
+        { "@type": "Question", "name": "Can I get everything on one single line?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. Under Options, change Keep to make it one single line. Every break goes, including the blank lines between paragraphs." } }
+      ]
+    }
+  ]
+}
+</script>
+
+<script type="module" src="/linebreaks.js"></script>
+</body>
+</html>

@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<title>Clean Text. Remove formatting from pasted text, free</title>
+<meta name="description" content="Paste messy text from an email, a text message or a document. Get clean, properly formatted text back, ready to paste anywhere. Free, no sign-up, and nothing ever leaves your browser.">
+<link rel="canonical" href="https://cleantext.withmagic.ai/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Clean Text">
+<meta property="og:title" content="Clean Text. Remove formatting from pasted text, free">
+<meta property="og:description" content="Paste messy text. Press one button. Get clean formatted text on your clipboard. Nothing is uploaded.">
+<meta property="og:url" content="https://cleantext.withmagic.ai/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Clean Text. Remove formatting from pasted text, free">
+<meta name="twitter:description" content="Paste messy text. Press one button. Get clean formatted text on your clipboard. Nothing is uploaded.">
+<meta property="og:image" content="https://cleantext.withmagic.ai/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A messy forwarded email on the left, the same message cleaned and properly formatted on the right.">
+<meta name="twitter:image" content="https://cleantext.withmagic.ai/og.png">
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<script src="/boot.js"></script>
+
+<a class="skip" href="#tool">Skip to the tool</a>
+
+<header class="site">
+  <div class="wrap bar">
+    <a class="mark" href="/">clean<span>text</span></a>
+    <nav aria-label="Page sections">
+      <a href="#what-it-fixes">What it fixes</a>
+      <a href="#faq">Questions</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero wrap">
+    <p class="kick">Free. No sign-up. Nothing uploaded.</p>
+    <h1>Clean up messy pasted text</h1>
+  </section>
+
+  <!-- ---------------------------------------------------------------- -->
+  <!-- ONE thing on the first screen: the box. Raj, 2026-09-28: "no one's going to
+       really read the instructions", and a first tester had to be told what to do. So box 2,
+       the button and every secondary control stay hidden until there is a result,
+       and the label on each thing is the instruction. docs/DESIGN-simple-flow.md, D46.
+       Box 2 and the bar carry `hidden` IN THE HTML, so a module that never starts
+       leaves the red box and box 1, and no dead button. -->
+  <section id="tool" class="tool simple wrap" aria-labelledby="tool-title">
+    <h2 id="tool-title" class="sr-only">The cleaner</h2>
+
+    <!-- Revealed by boot.js if the tool fails to start. A dead page that says
+         nothing is the worst outcome there is: the person cannot tell whether it is
+         broken, slow, or their own mistake. -->
+    <div id="boot-error" class="boot-error" role="alert" hidden>
+      <p><strong>The cleaner did not load.</strong> Your text is safe, nothing was sent anywhere.
+      Reload the page and it will usually come back.</p>
+      <p class="boot-error-detail" id="boot-error-detail"></p>
+    </div>
+
+    <div class="pane">
+      <label class="pane-label" for="input">Paste your text</label>
+      <textarea id="input" spellcheck="false" autocomplete="off"
+        placeholder="Paste here"></textarea>
+      <!-- Only for a paste that went wrong: nothing arrived, nothing to copy. -->
+      <div id="note" class="chips note" aria-hidden="true"></div>
+    </div>
+
+    <div id="result" class="pane result" hidden>
+      <p class="pane-label" id="output-label">Cleaned. You can edit it.</p>
+      <div id="output" class="output" contenteditable="true" spellcheck="false"
+        role="textbox" aria-multiline="true" aria-labelledby="output-label"></div>
+
+      <!-- Only the chips that say something a person would not otherwise believe:
+           the formatting survived (D39), or the paste was moved (D40). The counts
+           live one tap away, under "What changed". -->
+      <div id="chips" class="chips" aria-hidden="true"></div>
+
+      <details id="changed" class="changed" hidden>
+        <summary>What changed</summary>
+        <div id="stats" class="chips"></div>
+      </details>
+
+      <div class="actions-minor">
+        <button id="copy-plain" class="linkish" type="button">Copy as plain text instead</button>
+        <button id="undo" class="linkish" type="button" hidden>Undo my edits</button>
+        <button id="reset" class="linkish" type="button">Start over</button>
+      </div>
+
+      <details class="options">
+        <summary>Options</summary>
+        <div class="opts">
+          <label class="opt"><input type="checkbox" id="opt-unwrap" checked> Rejoin sentences broken across lines</label>
+          <label class="opt"><input type="checkbox" id="opt-headings" checked> Turn short standalone lines into headings</label>
+          <label class="opt"><input type="checkbox" id="opt-lists" checked> Keep bullet and numbered lists</label>
+          <label class="opt"><input type="checkbox" id="opt-labels" checked> Bold labels like When, Where and RSVP</label>
+          <label class="opt"><input type="checkbox" id="opt-links" checked> Make links clickable</label>
+          <label class="opt"><input type="checkbox" id="opt-stripTracking" checked> Remove tracking junk from links</label>
+          <label class="opt"><input type="checkbox" id="opt-straightenQuotes"> Straighten curly quotes</label>
+        </div>
+      </details>
+    </div>
+
+    <!-- The whole sentence, for screen readers. What is on screen is shorter. -->
+    <p id="status" class="sr-only" role="status" aria-live="polite"></p>
+
+    <!-- ONE button (D25), pinned to the bottom edge so it is on screen at any
+         height Safari leaves (D46). It only appears once there is something to
+         copy, and it is only blue when copying is still the job: after a copy
+         that worked it says "Copy again" and steps back (CET-5). -->
+    <div id="copybar" class="copybar" hidden>
+      <div class="wrap">
+        <div class="copybar-row">
+          <p id="copy-state" class="copy-state" aria-hidden="true"></p>
+          <button id="copy-rich" class="btn primary" type="button">Copy cleaned text</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What the lede said, moved below the tool so the first screen is only the box.
+       The words stay on the page for the stranger arriving from a search. -->
+  <section class="wrap intro-after">
+    <p class="lede">
+      Paste something that came out of an email, a text message or a document.
+      It comes back clean and properly formatted, ready to paste anywhere.
+      And your text never leaves this browser.
+    </p>
+  </section>
+
+  <!-- ---------------------------------------------------------------- -->
+  <section class="wrap answer" aria-labelledby="privacy-q">
+    <h2 id="privacy-q">Where does your text go?</h2>
+    <p class="big-answer">
+      Nowhere. It stays in your browser.
+    </p>
+    <p>
+      There is no server doing the work here. The cleaning happens on your own machine, in the page
+      you are looking at. So nothing gets uploaded, nothing gets stored, and nothing gets logged.
+    </p>
+    <p>
+      You do not have to take my word for it. Open your browser's network tab and watch while you
+      paste. Nothing goes out. Or turn off your wifi and use the page anyway. It still works.
+    </p>
+  </section>
+
+  <!-- ---------------------------------------------------------------- -->
+  <section id="what-it-fixes" class="wrap fixes" aria-labelledby="fixes-title">
+    <h2 id="fixes-title">What it fixes</h2>
+
+    <div class="cols">
+      <div>
+        <h3>The junk it takes out</h3>
+        <ul class="plain">
+          <li>Invisible characters from Word and Google Docs. The ones that look fine now and break the paste later.</li>
+          <li>Sentences chopped into short lines by an email client.</li>
+          <li>Forwarded headers, quoted replies and "Sent from my iPhone".</li>
+          <li>WhatsApp export stamps like <code>[9/12/26, 3:04 PM] Priya:</code></li>
+          <li>Signatures, unsubscribe lines and confidentiality notices.</li>
+          <li>Tracking junk on links. <code>utm_source</code>, <code>fbclid</code> and the rest.</li>
+          <li>Non-breaking spaces, double spaces and stacks of blank lines.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>The formatting it puts back</h3>
+        <ul class="plain">
+          <li>Paragraphs that read as paragraphs.</li>
+          <li>Headings, where a line was clearly a heading.</li>
+          <li>Bullet lists and numbered lists, whatever bullet character was used.</li>
+          <li>Bold labels on lines like <code>When:</code>, <code>Where:</code>, <code>Cost:</code> and <code>RSVP:</code></li>
+          <li>Links you can actually click, and email addresses too.</li>
+          <li>A plain text version at the same time, for editors that will not take formatting.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------------- -->
+  <section class="wrap story" aria-labelledby="why-title">
+    <h2 id="why-title">Why this exists</h2>
+    <p>
+      This was built for one person doing one job. She sends the emails for a community group.
+      People send her the message however they feel like sending it. Sometimes a text. Sometimes an
+      email. Sometimes an email that was forwarded four times before it got to her.
+    </p>
+    <p>
+      Then she pastes it into the mailing tool and it comes out a mess.
+    </p>
+    <p>
+      So she strips all the formatting off. Then she puts the formatting back by hand. Every single
+      time, for every message.
+    </p>
+    <p>
+      That is the whole reason this page exists. It does the stripping and the formatting in one
+      step. It works for Club Express, and it works for anything else you paste into.
+    </p>
+  </section>
+
+  <!-- ---------------------------------------------------------------- -->
+  <section id="faq" class="wrap faq" aria-labelledby="faq-title">
+    <h2 id="faq-title">Questions</h2>
+
+    <details>
+      <summary>Is it really free?</summary>
+      <p>Yes. There is nothing to buy and no account to make. The page costs me nothing to run, because
+      your browser does all the work. So there is nothing to charge you for.</p>
+    </details>
+
+    <details>
+      <summary>Does my text get uploaded anywhere?</summary>
+      <p>No. There is no server involved in the cleaning. Your text is read, cleaned and shown back to
+      you inside your own browser. It is never sent, never saved and never logged. Check the network
+      tab if you want to see for yourself.</p>
+    </details>
+
+    <details>
+      <summary>Does it work with Club Express?</summary>
+      <p>Yes. Press Copy formatted, then paste into the Club Express editor. If the formatting does not
+      come through the way you want, press Copy plain text instead and paste that. One of the two will
+      do what you need.</p>
+    </details>
+
+    <details>
+      <summary>What if it gets something wrong?</summary>
+      <p>Your original text is still sitting in the left box, exactly as you pasted it. Nothing is
+      destroyed. You can also edit the cleaned version directly before you copy it, or turn individual
+      rules off under Options and clean it again.</p>
+    </details>
+
+    <details>
+      <summary>Does it work on a phone?</summary>
+      <p>Yes. Paste, press the button, press copy. The same three steps.</p>
+    </details>
+
+    <details>
+      <summary>Does it work offline?</summary>
+      <p>Yes, once the page has loaded. There is nothing for it to call out to.</p>
+    </details>
+
+    <details>
+      <summary>What about Word, Google Docs and Outlook?</summary>
+      <p>Those are the usual sources of the mess. Word and Google Docs add invisible characters and
+      curly quotes. Outlook adds the forwarded headers and breaks sentences across lines. All of that
+      gets handled.</p>
+    </details>
+  </section>
+
+  <section class="wrap closer">
+    <p class="closer-line">Paste yours in and see.</p>
+    <p><a class="btn primary" href="#tool">Back to the tool</a></p>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p class="foot-mark">clean<span>text</span></p>
+    <nav aria-label="Tools">
+      <a href="/">Full cleaner</a>
+      <a href="/tools/">All tools</a>
+      <a href="/remove-line-breaks/">Line breaks</a>
+      <a href="/remove-extra-spaces/">Extra spaces</a>
+      <a href="/title-case-converter/">Title case</a>
+      <a href="/markdown-to-plain-text/">Markdown to plain text</a>
+    </nav>
+    <nav aria-label="Footer">
+      <a href="/privacy.html">Privacy</a>
+      <a href="/terms.html">Terms</a>
+      <a href="mailto:hello@withmagic.ai">Contact</a>
+    </nav>
+    <p class="fine">Made with <svg class="heart" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21s-7.5-4.7-9.5-9.2C1.1 8.5 2.7 5 6.2 5c2 0 3.3 1.1 4 2.1.7-1 2-2.1 4-2.1 3.5 0 5.1 3.5 3.7 6.8C19.5 16.3 12 21 12 21z"/></svg> by Coding Raj.</p>
+  </div>
+</footer>
+
+<noscript>
+  <div class="wrap noscript-note">
+    <p>This tool needs JavaScript, because the cleaning runs in your browser rather than on a server.
+    That is also why nothing you paste is ever uploaded.</p>
+  </div>
+</noscript>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://cleantext.withmagic.ai/#app",
+      "name": "Clean Text",
+      "url": "https://cleantext.withmagic.ai/",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Any modern browser",
+      "browserRequirements": "Requires JavaScript",
+      "description": "Removes formatting damage from pasted text and puts clean formatting back. Runs entirely in the browser, so nothing is uploaded.",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "featureList": [
+        "Removes invisible and zero-width characters",
+        "Rejoins sentences broken across lines",
+        "Removes forwarded email headers and quoted replies",
+        "Removes tracking parameters from links",
+        "Rebuilds headings, bullet lists and bold labels",
+        "Copies as formatted text and plain text at the same time"
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://cleantext.withmagic.ai/#faq",
+      "mainEntity": [
+        { "@type": "Question", "name": "Is it really free?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. There is nothing to buy and no account to make. The page costs nothing to run because your browser does all the work." } },
+        { "@type": "Question", "name": "Does my text get uploaded anywhere?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. There is no server involved in the cleaning. Your text is read, cleaned and shown back to you inside your own browser. It is never sent, never saved and never logged." } },
+        { "@type": "Question", "name": "Does it work with Club Express?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. Press Copy formatted, then paste into the Club Express editor. If the formatting does not come through, press Copy plain text instead." } },
+        { "@type": "Question", "name": "What if it gets something wrong?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Your original text is still in the left box exactly as you pasted it. You can edit the cleaned version before copying, or turn individual rules off under Options and clean it again." } },
+        { "@type": "Question", "name": "Does it work offline?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes, once the page has loaded. There is nothing for it to call out to." } }
+      ]
+    }
+  ]
+}
+</script>
+
+<script type="module" src="/app.js"></script>
+</body>
+</html>

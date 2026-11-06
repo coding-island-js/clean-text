@@ -1,0 +1,7 @@
+#!/bin/sh
+# Shim. The scanner lives in pre-commit.cjs.
+#
+# It cannot be a bare `#!/usr/bin/env node` file any more: Node takes its module type from the
+# nearest package.json, so `"type": "module"` - which every Worker project sets - turned the
+# scanner into an ESM file full of require() and killed it. A .cjs file is CommonJS regardless.
+exec node "$(dirname "$0")/pre-commit.cjs" "$@"

@@ -1,0 +1,677 @@
+/* ------------------------------------------------------------------ *
+ * Clean Text — terminal-mono flavor (recipes/design-brain.md)
+ *
+ * Light only, on purpose. Raj, 2026-09-17: "I don't like dark mode."
+ * So there is no prefers-color-scheme block anywhere in this file, and
+ * color-scheme is pinned to light so the browser does not invert the
+ * form controls on a viewer whose OS is dark.
+ *
+ * Fonts are the system stacks. Nothing is fetched, from anywhere, ever.
+ * That is a design decision, not a shortcut: the page claims it makes no
+ * network requests, and a webfont would make that claim false.
+ * ------------------------------------------------------------------ */
+
+:root {
+  color-scheme: light;
+
+  --bg:        #faf9f7;
+  --bg-soft:   #f2f0ec;
+  --card:      #ffffff;
+  --ink:       #15181d;
+  --ink-soft:  #454b55;
+  --ink-muted: #5f656e;   /* 5.6:1 on --bg. Was #6e757f at 4.4:1, under AA. CET-4 */
+  --line:      #e3dfd8;
+  /* Helper text INSIDE the white boxes: placeholder and empty state. Lighter than
+     --ink-muted so it reads as a hint rather than as content you typed, while
+     still clearing AA (4.7:1 on white). --ink-muted stays for the hint lines that
+     sit on the page background and are real information. */
+  --ink-hint:  #6f747e;
+  --line-soft: #eeebe5;
+
+  --accent:     #2347ff;
+  --accent-ink: #1a34bd;
+  --accent-bg:  #eef1ff;
+  --pop:        #dcf64a;   /* non-text marks only. It never carries words. */
+
+  --ok:   #166534;
+  --warn: #8a5a00;
+
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+
+  --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;
+  --s5: 24px; --s6: 36px; --s7: 56px; --s8: 88px;
+
+  --radius:    10px;
+  --radius-sm: 6px;
+
+  --wrap: 1080px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 17px/1.6 var(--sans);
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.wrap {
+  max-width: var(--wrap);
+  margin: 0 auto;
+  padding-left: var(--s5);
+  padding-right: var(--s5);
+}
+
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+
+/* Safari before 15.4 has no :focus-visible, and a keyboard user there would get no
+   focus ring at all. So :focus paints one, and :focus-visible takes over wherever it
+   is supported. The middle rule removes the ring for mouse users on modern browsers;
+   older ones keep a ring on click, which is the harmless way to be wrong. */
+:focus {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+:focus:not(:focus-visible) { outline: none; }
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.skip {
+  position: absolute; left: -9999px; top: var(--s2);
+  background: var(--ink); color: #fff;
+  padding: var(--s3) var(--s4); border-radius: var(--radius-sm);
+  font-family: var(--mono); font-size: 14px; z-index: 10;
+}
+.skip:focus { left: var(--s4); }
+
+/* ---------------------------------------------------------- header */
+
+header.site {
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+}
+.bar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--s4);
+  padding-top: var(--s4); padding-bottom: var(--s4);
+}
+.mark, .foot-mark {
+  font-family: var(--mono);
+  font-size: 18px; font-weight: 600; letter-spacing: -0.02em;
+  color: var(--ink); text-decoration: none;
+}
+a.mark { min-height: 44px; display: inline-flex; align-items: center; }
+.mark span, .foot-mark span { color: var(--accent); }
+.bar nav { display: flex; gap: var(--s5); }
+.bar nav a {
+  font-family: var(--mono); font-size: 14px;
+  color: var(--ink-soft); text-decoration: none;
+  /* The tap area is 44px even though the text is 14px. Found by tests/test-ui.mjs,
+     which measures every control rather than trusting the ones that look obvious. */
+  min-height: 44px; display: inline-flex; align-items: center;
+}
+.bar nav a:hover { color: var(--accent); }
+
+/* ---------------------------------------------------------- hero */
+
+.hero { padding-top: var(--s7); padding-bottom: var(--s5); }
+
+.kick {
+  font-family: var(--mono);
+  font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 0 0 var(--s3);
+  display: inline-block;
+  padding-bottom: var(--s1);
+  border-bottom: 3px solid var(--pop);
+}
+
+h1 {
+  font-family: var(--mono);
+  font-size: clamp(30px, 5.2vw, 46px);
+  line-height: 1.08; letter-spacing: -0.03em; font-weight: 600;
+  margin: 0 0 var(--s4);
+  max-width: 16ch;
+}
+
+.lede {
+  font-size: clamp(17px, 2.1vw, 20px);
+  line-height: 1.55; color: var(--ink-soft);
+  max-width: 62ch; margin: 0;
+}
+
+/* ---------------------------------------------------------- tool */
+
+.tool { padding-top: var(--s5); padding-bottom: var(--s6); }
+
+.panes { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s4); }
+
+.pane { display: flex; flex-direction: column; min-width: 0; }
+
+.pane-label {
+  font-family: var(--mono);
+  font-size: 13px; letter-spacing: 0.02em; text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: var(--s2);
+  display: flex; align-items: center; gap: var(--s2);
+}
+.num {
+  display: inline-grid; place-items: center;
+  width: 20px; height: 20px;
+  background: var(--ink); color: #fff;
+  border-radius: 50%; font-size: 11px; font-weight: 600;
+}
+
+textarea#input, .output {
+  width: 100%;
+  min-height: 340px;
+  max-height: 60vh;
+  overflow: auto;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--s4);
+  font: 400 16px/1.6 var(--sans);
+  color: var(--ink);
+  resize: vertical;
+}
+textarea#input { font-family: var(--mono); font-size: 14.5px; }
+textarea#input::placeholder { font-size: 16px; }
+textarea#input::placeholder { color: var(--ink-hint); }
+
+.output:empty::before {
+  content: "Your cleaned text shows up here.";
+  color: var(--ink-hint);
+}
+.output > :first-child { margin-top: 0; }
+.output > :last-child  { margin-bottom: 0; }
+/* The cleaned result is somebody's document. It must not inherit this page's own
+   section-heading look: the mono face, the flex row and the lime tick belong to the
+   site, not to her message. CET-1. */
+.output h2, .output h3 {
+  display: block;
+  font-family: var(--sans);
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.output h2::before, .output h3::before { content: none; }
+.output h2 { font-size: 21px; margin: var(--s5) 0 var(--s3); line-height: 1.25; }
+.output h3 { font-size: 18px; margin: var(--s4) 0 var(--s2); line-height: 1.3; }
+.output p  { margin: 0 0 var(--s3); }
+.output ul, .output ol { margin: 0 0 var(--s3); padding-left: var(--s5); }
+.output li { margin-bottom: var(--s1); }
+.output a  { color: var(--accent-ink); }
+.output hr { border: 0; border-top: 1px solid var(--line); margin: var(--s4) 0; }
+
+.hint {
+  font-size: 13px; color: var(--ink-muted);
+  margin: var(--s2) 0 0;
+}
+
+.boot-error {
+  border: 1px solid #e0b4b4;
+  background: #fdf0ef;
+  border-left: 4px solid #c0392b;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: var(--s4) var(--s5);
+  margin-bottom: var(--s4);
+}
+.boot-error p { margin: 0; max-width: 70ch; }
+.boot-error-detail {
+  font-family: var(--mono); font-size: 12.5px; color: var(--ink-soft);
+  margin-top: var(--s2) !important; word-break: break-word;
+}
+.boot-error-detail:empty { display: none; }
+
+/* ---------------------------------------------------------- actions */
+
+.actions {
+  display: flex; flex-wrap: wrap; gap: var(--s2);
+  margin-top: var(--s4);
+}
+
+/* One button. It is the only thing on the page to press, so it is allowed to be
+   big, and on a phone it takes the full width. */
+.actions .btn { min-width: 190px; }
+
+.btn {
+  font-family: var(--mono); font-size: 14px; font-weight: 500;
+  min-height: 44px;
+  padding: 0 var(--s4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  color: var(--ink);
+  cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  text-decoration: none;
+  transition: background .12s ease, border-color .12s ease;
+}
+.btn:hover:not(:disabled) { border-color: var(--ink-muted); background: var(--bg-soft); }
+.btn:disabled { opacity: .55; cursor: default; }
+
+.btn.primary {
+  background: var(--accent); border-color: var(--accent); color: #fff;
+}
+.btn.primary:hover:not(:disabled) { background: var(--accent-ink); border-color: var(--accent-ink); }
+
+.btn.quiet { background: transparent; color: var(--ink-soft); border-color: var(--line); }
+.btn.quiet:hover:not(:disabled) { background: var(--bg-soft); border-color: var(--line); }
+
+/* What the cleaner did, as things you scan rather than a sentence you read.
+   Every number here was counted by the cleaner. None of them are decorative. */
+.chips {
+  display: flex; flex-wrap: wrap; gap: var(--s2);
+  margin-top: var(--s3);
+  min-height: 30px;
+}
+.chip {
+  font-family: var(--mono); font-size: 12.5px; line-height: 1;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.chip.good { background: #e9f6ed; border-color: #bcdfc7; color: var(--ok); }
+.chip.warn { background: #fdf3e2; border-color: #f0dcb4; color: var(--warn); white-space: normal; }
+
+/* Secondary controls. These are not a second way to do the main job, they are the
+   things you reach for when something went sideways. So they read as text, sit
+   below the status line, and still carry a 44px touch target. */
+.actions-minor {
+  display: flex; flex-wrap: wrap;
+  gap: 0 var(--s5);
+  margin-top: var(--s1);
+}
+.linkish {
+  font-family: var(--mono); font-size: 13.5px;
+  background: none; border: 0; padding: 0;
+  color: var(--ink-soft);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  min-height: 44px;
+  display: inline-flex; align-items: center;
+}
+.linkish:hover:not(:disabled) { color: var(--accent-ink); }
+.linkish:disabled { color: var(--ink-muted); text-decoration: none; cursor: default; opacity: .7; }
+
+.status {
+  font-family: var(--mono); font-size: 13.5px;
+  color: var(--ink-soft);
+  min-height: 22px;
+  margin: var(--s3) 0 0;
+}
+.status.good  { color: var(--ok); }
+.status.warn  { color: var(--warn); }
+
+/* ------------------------------------------------ the simple flow (D46)
+   `/` only. The other tool pages keep their two panes and inline button.
+   One column everywhere, phone and desktop alike (Raj, 2026-09-28: "the same
+   experience for both"), 720px wide and left-aligned like the rest of the page.
+   Before a paste the only thing here is box 1. */
+.tool.simple > .pane, .tool.simple > .boot-error { max-width: 720px; }
+.tool.simple .result { margin-top: var(--s5); scroll-margin-top: var(--s4); }
+
+/* svh, not dvh: the SMALL viewport, Safari's toolbar expanded, so "box 1 fits on
+   the first screen" holds at the worst height rather than moving as it collapses. */
+.tool.simple textarea#input { min-height: clamp(200px, 32svh, 280px); }
+.tool.simple .output { min-height: 200px; }
+/* After a paste box 1 has done its job. It shrinks to a few lines so box 2, the
+   thing she is about to send, gets the screen. */
+.tool.simple.pasted textarea#input { min-height: 96px; height: 96px; }
+
+.tool.simple .chips { min-height: 0; }
+.tool.simple .chips:empty { display: none; }
+
+.changed { margin-top: var(--s3); }
+.changed summary {
+  font-family: var(--mono); font-size: 13.5px; color: var(--ink-soft);
+  min-height: 44px; display: flex; align-items: center; cursor: pointer;
+}
+/* display:flex drops the native disclosure triangle, so it is drawn back in:
+   without it, "What changed" reads as a label rather than something to open. */
+.changed summary::before { content: "+"; width: 1.4em; color: var(--ink-muted); }
+.changed[open] summary::before { content: "−"; }
+.changed summary::-webkit-details-marker { display: none; }
+.changed .chips { margin-top: 0; }
+
+/* The one button, pinned to the bottom edge. It is on screen at any height Safari
+   leaves, which is a number nobody could find a primary source for. It stays
+   clear of the home indicator through the safe-area inset (viewport-fit=cover is
+   set in the page head). */
+.copybar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+  padding: var(--s3) 0 calc(var(--s3) + env(safe-area-inset-bottom, 0px));
+}
+.copybar-row {
+  max-width: 720px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--s4);
+}
+.copy-state {
+  margin: 0;
+  font-family: var(--mono); font-size: 15px; font-weight: 600;
+  color: var(--ink-soft);
+}
+.copy-state.good { color: var(--ok); }
+.copy-state.warn { color: var(--warn); }
+.copybar .btn { min-width: 220px; min-height: 52px; font-size: 15px; }
+
+/* The page is padded by the bar's measured height, so the footer is never under it. */
+body.has-bar { padding-bottom: var(--bar-h, 0px); }
+/* iPhone: while the keyboard is up the bar would float over it or hide behind it. */
+body.kb-open .copybar { display: none; }
+
+.intro-after { padding-top: var(--s5); }
+
+/* ---------------------------------------------------------- options */
+
+.options { margin-top: var(--s4); border-top: 1px dashed var(--line); padding-top: var(--s3); }
+.options summary {
+  font-family: var(--mono); font-size: 13px; text-transform: uppercase;
+  letter-spacing: 0.04em; color: var(--ink-soft); cursor: pointer;
+  min-height: 44px; display: flex; align-items: center;
+}
+.opts {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--s2) var(--s5);
+  margin-top: var(--s3);
+}
+.opts label {
+  display: flex; align-items: center; gap: var(--s2);
+  font-size: 15px; color: var(--ink-soft);
+  min-height: 44px; cursor: pointer;
+}
+.opts input { width: 18px; height: 18px; accent-color: var(--accent); }
+
+/* ---------------------------------------------------------- content sections */
+
+section.answer, section.fixes, section.story, section.faq, section.closer {
+  padding-top: var(--s7); padding-bottom: var(--s2);
+}
+
+h2 {
+  font-family: var(--mono);
+  font-size: clamp(22px, 3vw, 28px);
+  letter-spacing: -0.02em; font-weight: 600;
+  margin: 0 0 var(--s4);
+  display: flex; align-items: center; gap: var(--s3);
+}
+h2::before {
+  content: ""; width: 18px; height: 3px;
+  background: var(--pop); flex: none;
+}
+
+h3 {
+  font-family: var(--mono);
+  font-size: 15px; text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  margin: 0 0 var(--s3);
+}
+
+p { max-width: 68ch; }
+
+.answer .big-answer {
+  font-family: var(--mono);
+  font-size: clamp(20px, 2.6vw, 26px);
+  line-height: 1.3; letter-spacing: -0.02em;
+  color: var(--ink);
+  background: var(--accent-bg);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: var(--s4) var(--s5);
+  margin: 0 0 var(--s4);
+  max-width: none;
+}
+
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s6); }
+
+ul.plain { list-style: none; margin: 0; padding: 0; }
+ul.plain li {
+  position: relative;
+  padding-left: var(--s5);
+  margin-bottom: var(--s3);
+  color: var(--ink-soft);
+  max-width: 54ch;
+}
+ul.plain li::before {
+  content: ""; position: absolute; left: 0; top: 11px;
+  width: 10px; height: 2px; background: var(--accent);
+}
+
+code {
+  font-family: var(--mono); font-size: 0.88em;
+  background: var(--bg-soft);
+  border: 1px solid var(--line-soft);
+  border-radius: 4px;
+  padding: 1px 5px;
+  word-break: break-word;
+}
+
+.story p { color: var(--ink-soft); }
+
+.faq details {
+  border-bottom: 1px solid var(--line);
+  padding: var(--s3) 0;
+}
+.faq summary {
+  font-family: var(--mono); font-size: 16px; font-weight: 500;
+  color: var(--ink); cursor: pointer;
+  min-height: 44px; display: flex; align-items: center;
+}
+.faq summary:hover { color: var(--accent); }
+.faq details p { color: var(--ink-soft); margin: var(--s2) 0 var(--s3); }
+
+.closer { text-align: left; padding-bottom: var(--s7); }
+.closer-line {
+  font-family: var(--mono);
+  font-size: clamp(20px, 3vw, 26px);
+  letter-spacing: -0.02em;
+  margin: 0 0 var(--s4);
+}
+
+/* ---------------------------------------------------------- legal pages */
+
+.legal { padding-top: var(--s7); padding-bottom: var(--s7); max-width: 760px; }
+.legal h1 {
+  font-size: clamp(28px, 4.5vw, 38px);
+  max-width: none;
+  margin-bottom: var(--s2);
+}
+.legal .updated {
+  font-family: var(--mono); font-size: 13px; color: var(--ink-muted);
+  margin: 0 0 var(--s6);
+}
+.legal h2 { font-size: clamp(18px, 2.4vw, 21px); margin-top: var(--s6); }
+.legal p  { color: var(--ink-soft); margin: 0 0 var(--s4); }
+.legal a  { color: var(--accent-ink); }
+.legal .big-answer {
+  font-family: var(--mono);
+  font-size: clamp(17px, 2.2vw, 21px);
+  line-height: 1.4; letter-spacing: -0.01em;
+  color: var(--ink);
+  background: var(--accent-bg);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: var(--s4) var(--s5);
+  max-width: none;
+}
+
+/* ---------------------------------------------------------- stats page */
+
+.stats { padding-top: var(--s7); padding-bottom: var(--s7); max-width: 860px; }
+.stats h1 { font-size: clamp(28px, 4.5vw, 38px); max-width: none; margin-bottom: var(--s2); }
+.stats h2 { font-size: clamp(18px, 2.4vw, 21px); margin-top: var(--s7); }
+.stats .updated { font-family: var(--mono); font-size: 13px; color: var(--ink-muted); margin: 0 0 var(--s6); }
+.stats .note { font-size: 14px; color: var(--ink-muted); margin-top: var(--s3); }
+
+.tiles {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--s3);
+}
+.tile {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: var(--s4);
+  display: flex; flex-direction: column; gap: var(--s1);
+}
+.tile-n { font-family: var(--mono); font-size: 30px; letter-spacing: -0.03em; color: var(--ink); }
+.tile-l { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-muted); }
+
+.stats-table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+.stats-table th {
+  text-align: left; font-family: var(--mono); font-size: 12px;
+  text-transform: uppercase; letter-spacing: .04em; color: var(--ink-muted);
+  padding: var(--s2) var(--s3) var(--s2) 0; border-bottom: 1px solid var(--line);
+}
+.stats-table td { padding: var(--s2) var(--s3) var(--s2) 0; border-bottom: 1px solid var(--line-soft); }
+.stats-table .n { text-align: right; font-family: var(--mono); }
+.stats-table .mono { font-family: var(--mono); }
+.stats-table .muted { color: var(--ink-muted); }
+.stats-table .bar { width: 28%; }
+.stats-table .bar span { display: block; height: 8px; border-radius: 4px; background: var(--accent); min-width: 2px; }
+
+@media (max-width: 560px) {
+  .stats-table { font-size: 13px; }
+  .stats-table .bar { display: none; }
+}
+
+/* ---------------------------------------------------------- footer */
+
+footer.site {
+  border-top: 1px solid var(--line);
+  background: var(--bg-soft);
+  padding: var(--s6) 0 var(--s7);
+  margin-top: var(--s6);
+}
+footer.site nav { display: flex; flex-wrap: wrap; gap: var(--s5); margin: var(--s3) 0; }
+footer.site nav a {
+  font-family: var(--mono); font-size: 14px;
+  color: var(--ink-soft); text-decoration: none;
+  min-height: 44px; display: inline-flex; align-items: center;
+}
+footer.site nav a:hover { color: var(--accent); }
+.fine {
+  font-size: 13px; color: var(--ink-muted); margin: 0;
+  display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+}
+/* The only colour on the site outside the one accent and its pop. A heart is a
+   conventional symbol rather than a brand colour, and a blue one reads as a mistake.
+   It is an inline SVG, not an emoji: it renders identically on every platform and
+   the house rule bans emoji in body content. */
+.fine .heart { fill: #d1443c; flex: none; }
+
+.noscript-note {
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: var(--s4);
+  margin: var(--s5) auto;
+}
+
+/* ---------------------------------------------------------- narrow */
+
+@media (max-width: 860px) {
+  .panes { grid-template-columns: 1fr; }
+  .cols  { grid-template-columns: 1fr; gap: var(--s5); }
+  textarea#input, .output { min-height: 240px; }
+}
+
+@media (max-width: 560px) {
+  body { font-size: 16px; }
+  .wrap { padding-left: var(--s4); padding-right: var(--s4); }
+  h1 { max-width: none; }
+  .bar nav { gap: var(--s4); }
+
+  /* CET-2. The buttons are the point of the page and they were below the fold on a
+     phone. Everything above them gets tighter, and the panes only need to be big
+     enough to show that something happened. app.js scrolls here after a paste. */
+  .hero { padding-top: var(--s5); padding-bottom: var(--s3); }
+  .lede { font-size: 16.5px; }
+  .tool { padding-top: var(--s4); }
+  textarea#input { min-height: 140px; }
+  .output { min-height: 190px; }
+
+  .actions { gap: var(--s2); }
+  .actions .btn { flex: 1 1 100%; }
+  .actions-minor { gap: 0 var(--s4); }
+
+  /* D46: nothing above box 1 but the kicker and the heading, kept tight. */
+  .hero { padding-bottom: 0; }
+  .copybar-row { flex-direction: column; align-items: stretch; gap: var(--s2); }
+  .copybar .btn { width: 100%; min-width: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+}
+
+@media print {
+  header.site, footer.site, .actions, .options, .hint, .skip, .copybar, .changed, .actions-minor { display: none; }
+  .output { border: 0; }
+}
+
+/* ---------------------------------------------------- the other tool pages
+   `/` produces formatted HTML, so its result box is a contenteditable div. The
+   single-transform tools produce plain text, so theirs is a real textarea: no
+   innerHTML anywhere in the path, and the browser handles selection and editing
+   without any help. It shares the box above; only the face differs. */
+textarea#output { font-family: var(--mono); font-size: 14.5px; }
+textarea#output::placeholder { color: var(--ink-hint); font-size: 16px; }
+
+/* Most options are checkboxes. A couple are three-way choices, because
+   "collapse them" and "delete every one" are genuinely different jobs and a
+   checkbox cannot say which. */
+.opts .opt-select { gap: var(--s3); }
+.opts .opt-select > span { white-space: nowrap; }
+.opts select {
+  flex: 1 1 auto; min-width: 0; min-height: 44px;
+  background: var(--card); color: var(--ink);
+  border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 0 var(--s3);
+  font: 400 15px/1.4 var(--sans);
+}
+.opts select:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* The footer carries two navs on the tool pages: the tools, then the legal
+   links. They must not run together into one undifferentiated row. */
+footer.site nav + nav { margin-top: var(--s2); }
+
+/* ------------------------------------------------------------ the tools hub
+   A list of tools is a list, not a grid of cards. Each entry is a heading you
+   can click and one sentence saying what it is for, because a person scanning
+   this page is deciding which tool matches what went wrong. */
+.tool-list ul.plain { display: grid; gap: var(--s5); }
+.tool-list li { padding-bottom: var(--s4); border-bottom: 1px solid var(--line); }
+.tool-list li:last-child { border-bottom: 0; }
+.tool-list h3 { margin: 0 0 var(--s2); font-size: 19px; }
+.tool-list h3 a { text-decoration: none; }
+.tool-list h3 a:hover { text-decoration: underline; }
+.tool-list p { margin: 0; color: var(--ink-soft); max-width: 62ch; }

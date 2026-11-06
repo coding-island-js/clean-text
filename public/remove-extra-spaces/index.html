@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<title>Remove Extra Spaces From Text. Free, nothing uploaded</title>
+<meta name="description" content="Paste text with double spaces, stray tabs, trailing spaces or stacks of blank lines. Get it back tidy. Free, no sign-up, and nothing ever leaves your browser.">
+<link rel="canonical" href="https://cleantext.withmagic.ai/remove-extra-spaces/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Clean Text">
+<meta property="og:title" content="Remove Extra Spaces From Text. Free, nothing uploaded">
+<meta property="og:description" content="Double spaces, tabs, trailing spaces, blank lines. Paste, press one button, done. Nothing is uploaded.">
+<meta property="og:url" content="https://cleantext.withmagic.ai/remove-extra-spaces/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Remove Extra Spaces From Text. Free, nothing uploaded">
+<meta name="twitter:description" content="Double spaces, tabs, trailing spaces, blank lines. Paste, press one button, done. Nothing is uploaded.">
+<meta property="og:image" content="https://cleantext.withmagic.ai/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Messy text on the left, the same text cleaned on the right.">
+<meta name="twitter:image" content="https://cleantext.withmagic.ai/og.png">
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<script src="/boot.js"></script>
+
+<a class="skip" href="#tool">Skip to the tool</a>
+
+<header class="site">
+  <div class="wrap bar">
+    <a class="mark" href="/">clean<span>text</span></a>
+    <nav aria-label="Page sections">
+      <a href="/">Full cleaner</a>
+      <a href="#faq">Questions</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero wrap">
+    <p class="kick">Free. No sign-up. Nothing uploaded.</p>
+    <h1>Remove extra spaces from text</h1>
+    <p class="lede">
+      Double spaces between words. Tabs that came from a spreadsheet. Trailing spaces you cannot see.
+      Stacks of blank lines. Paste it in and it comes back tidy, and your text never leaves this browser.
+    </p>
+  </section>
+
+  <!-- ---------------------------------------------------------------- -->
+  <section id="tool" class="tool wrap" aria-labelledby="tool-title">
+    <h2 id="tool-title" class="sr-only">The tool</h2>
+
+    <!-- Revealed by boot.js if the module never starts. A dead page that says
+         nothing is the worst outcome there is. -->
+    <div id="boot-error" class="boot-error" role="alert" hidden>
+      <p><strong>The tool did not load.</strong> Your text is safe, nothing was sent anywhere.
+      Reload the page and it will usually come back.</p>
+      <p class="boot-error-detail" id="boot-error-detail"></p>
+    </div>
+
+    <div class="panes">
+      <div class="pane">
+        <label class="pane-label" for="input"><span class="num">1</span> Paste</label>
+        <textarea id="input" spellcheck="false" autocomplete="off"
+          placeholder="Paste here"
+          aria-describedby="input-help"></textarea>
+        <p id="input-help" class="hint">Your original stays here.</p>
+      </div>
+
+      <div class="pane">
+        <label class="pane-label" for="output"><span class="num">2</span> Tidied</label>
+        <textarea id="output" class="output" spellcheck="false" autocomplete="off"
+          placeholder="Your tidied text shows up here."
+          aria-label="Tidied text, editable"></textarea>
+        <p class="hint">You can edit this.</p>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="copy" class="btn primary" type="button">Copy tidied text</button>
+    </div>
+
+    <p id="status" class="sr-only" role="status" aria-live="polite"></p>
+    <div id="chips" class="chips" aria-hidden="true"></div>
+
+    <div class="actions-minor">
+      <button id="reset" class="linkish" type="button">Start over</button>
+    </div>
+
+    <details class="options">
+      <summary>Options</summary>
+      <div class="opts">
+        <label class="opt"><input type="checkbox" id="opt-collapseSpaces" checked> Squeeze runs of spaces down to one</label>
+        <label class="opt"><input type="checkbox" id="opt-trimLineEnds" checked> Remove trailing spaces at the end of lines</label>
+        <label class="opt"><input type="checkbox" id="opt-trimLineStarts"> Remove indentation at the start of lines</label>
+        <label class="opt"><input type="checkbox" id="opt-tabs" checked> Turn tabs into single spaces</label>
+        <label class="opt"><input type="checkbox" id="opt-invisibles" checked> Remove invisible characters</label>
+        <label class="opt opt-select">
+          <span>Blank lines</span>
+          <select id="opt-blankLines">
+            <option value="collapse" selected>Collapse a run down to one</option>
+            <option value="keep">Leave them exactly as they are</option>
+            <option value="remove">Remove every blank line</option>
+          </select>
+        </label>
+      </div>
+    </details>
+  </section>
+
+  <!-- ---------------------------------------------------------------- -->
+  <section class="wrap answer" aria-labelledby="privacy-q">
+    <h2 id="privacy-q">Where does your text go?</h2>
+    <p class="big-answer">Nowhere. It stays in your browser.</p>
+    <p>
+      There is no server doing the work here. Open your browser's network tab and watch while you
+      paste. Nothing goes out. Or turn off your wifi and use the page anyway. It still works.
+    </p>
+  </section>
+
+  <!-- ---------------------------------------------------------------- -->
+  <section id="faq" class="wrap faq" aria-labelledby="faq-title">
+    <h2 id="faq-title">Questions</h2>
+
+    <details>
+      <summary>Does it touch anything except the spacing?</summary>
+      <p>No. It squeezes spaces, replaces tabs, trims line ends and handles blank lines. That is all.
+      It does not rejoin your sentences, strip email headers or rebuild your formatting. If you want
+      that, use the <a href="/">full cleaner</a> instead.</p>
+    </details>
+
+    <details>
+      <summary>Why does it keep my indentation?</summary>
+      <p>Because indentation at the start of a line is usually deliberate. Spaces between words are
+      the damage. If you do want the indentation gone, there is a checkbox for it under Options.</p>
+    </details>
+
+    <details>
+      <summary>What are invisible characters?</summary>
+      <p>Zero-width spaces and formatting marks that Word, Google Docs and AI tools leave behind.
+      They look like nothing on screen and then break the paste somewhere else later.</p>
+    </details>
+
+    <details>
+      <summary>Is it really free?</summary>
+      <p>Yes. Nothing to buy, no account. Your browser does all the work, so the page costs nothing
+      to run and there is nothing to charge you for.</p>
+    </details>
+  </section>
+
+  <section class="wrap closer">
+    <p class="closer-line">Paste yours in and see.</p>
+    <p><a class="btn primary" href="#tool">Back to the tool</a></p>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p class="foot-mark">clean<span>text</span></p>
+    <nav aria-label="Tools">
+      <a href="/">Full cleaner</a>
+      <a href="/tools/">All tools</a>
+      <a href="/remove-line-breaks/">Line breaks</a>
+      <a href="/remove-extra-spaces/">Extra spaces</a>
+      <a href="/title-case-converter/">Title case</a>
+      <a href="/markdown-to-plain-text/">Markdown to plain text</a>
+    </nav>
+    <nav aria-label="Footer">
+      <a href="/privacy.html">Privacy</a>
+      <a href="/terms.html">Terms</a>
+      <a href="mailto:hello@withmagic.ai">Contact</a>
+    </nav>
+    <p class="fine">Made with <svg class="heart" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21s-7.5-4.7-9.5-9.2C1.1 8.5 2.7 5 6.2 5c2 0 3.3 1.1 4 2.1.7-1 2-2.1 4-2.1 3.5 0 5.1 3.5 3.7 6.8C19.5 16.3 12 21 12 21z"/></svg> by Coding Raj.</p>
+  </div>
+</footer>
+
+<noscript>
+  <div class="wrap noscript-note">
+    <p>This tool needs JavaScript, because the work runs in your browser rather than on a server.
+    That is also why nothing you paste is ever uploaded.</p>
+  </div>
+</noscript>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://cleantext.withmagic.ai/remove-extra-spaces/#app",
+      "name": "Remove Extra Spaces",
+      "url": "https://cleantext.withmagic.ai/remove-extra-spaces/",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Any modern browser",
+      "browserRequirements": "Requires JavaScript",
+      "description": "Removes double spaces, tabs, trailing spaces, invisible characters and runs of blank lines from pasted text. Runs entirely in the browser, so nothing is uploaded.",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "isPartOf": { "@id": "https://cleantext.withmagic.ai/#app" }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://cleantext.withmagic.ai/remove-extra-spaces/#faq",
+      "mainEntity": [
+        { "@type": "Question", "name": "Does it touch anything except the spacing?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. It squeezes spaces, replaces tabs, trims line ends and handles blank lines. It does not rejoin sentences, strip email headers or rebuild formatting." } },
+        { "@type": "Question", "name": "Why does it keep my indentation?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Indentation at the start of a line is usually deliberate. Spaces between words are the damage. There is a checkbox if you want the indentation gone too." } },
+        { "@type": "Question", "name": "Does my text get uploaded anywhere?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No. There is no server involved. The text is read and tidied inside your own browser, and is never sent, saved or logged." } }
+      ]
+    }
+  ]
+}
+</script>
+
+<script type="module" src="/spaces.js"></script>
+</body>
+</html>

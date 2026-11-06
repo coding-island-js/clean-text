@@ -1,0 +1,54 @@
+[build]
+  publish = "public"
+  command = ""
+
+# No build step. The files in public/ are the site.
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=(), interest-cohort=()"
+    X-Frame-Options = "SAMEORIGIN"
+    # The page claims it makes no network requests. This header is what enforces
+    # that claim rather than merely asserting it: no external scripts, styles,
+    # fonts, images or connections are permitted at all.
+    Content-Security-Policy = "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; worker-src 'self'; manifest-src 'self'; form-action 'none'; base-uri 'none'; frame-ancestors 'self'"
+
+# Scripts and styles must always be revalidated.
+#
+# There is no build step here, so filenames never change, which means a browser
+# holding a cached app.js can pair it with freshly deployed HTML. On 2026-09-17 that
+# produced a COMPLETELY DEAD page: the HTML had dropped an element the cached JS
+# still reached for, the module threw on load, and the visitor saw a tool that did
+# nothing at all with no error to explain it.
+#
+# max-age=0 with must-revalidate still costs almost nothing: Netlify serves strong
+# ETags, so the browser gets a 304 and no body. Correctness is worth the round trip
+# on a 9 KB file.
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# The service worker must NEVER be cached, or a bad one cannot be replaced.
+# It also needs its own CSP: the page's connect-src is 'none', and a worker inherits
+# the policy served with its own script, so without this its fetches are blocked and
+# offline support silently does nothing.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Content-Security-Policy = "default-src 'none'; script-src 'self'; connect-src 'self'"
+
+# The OG image is referenced by filename and changes rarely, so it can be cached.
+[[headers]]
+  for = "/og.png"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"

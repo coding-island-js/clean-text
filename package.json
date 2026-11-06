@@ -1,0 +1,16 @@
+{
+  "name": "message-cleaner",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Paste messy text, get clean formatted text on your clipboard. Runs entirely in the browser.",
+  "scripts": {
+    "test": "node tests/test-clean.js && node tests/test-ui.mjs",
+    "test:unit": "node tests/test-clean.js",
+    "test:ui": "node tests/test-ui.mjs",
+    "deploy": "node ops/deploy.mjs"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^11.1.0"
+  }
+}
